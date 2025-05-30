@@ -1,8 +1,14 @@
+:root {
+    --key-size: 40px;
+    --key-gap: 3px;
+    --key-font-size: 14px;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f5f5;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,49 +16,57 @@ body {
 }
 
 .container {
-    max-width: 1200px;
     width: 100%;
+    max-width: 1200px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 h1 {
     text-align: center;
     color: #333;
-    margin-bottom: 30px;
+    margin: 10px 0;
+    font-size: clamp(1.5rem, 4vw, 2rem);
 }
 
 .keyboard {
     background-color: #e0e0e0;
     border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    overflow-x: auto;
 }
 
 .row {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: var(--key-gap);
     justify-content: center;
+    flex-wrap: nowrap;
+    min-width: min-content;
 }
 
 .key {
     background-color: #fff;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px 10px;
-    margin: 0 3px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 0 var(--key-gap);
     text-align: center;
-    font-size: 14px;
+    font-size: var(--key-font-size);
     font-weight: bold;
-    min-width: 40px;
-    height: 40px;
+    min-width: var(--key-size);
+    height: var(--key-size);
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: all 0.1s ease;
     cursor: pointer;
     user-select: none;
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .key:hover {
@@ -67,40 +81,40 @@ h1 {
 }
 
 .wide {
-    min-width: 80px;
+    min-width: calc(var(--key-size) * 2);
 }
 
 .x-wide {
-    min-width: 100px;
+    min-width: calc(var(--key-size) * 2.5);
 }
 
 .xx-wide {
-    min-width: 120px;
+    min-width: calc(var(--key-size) * 3);
 }
 
 .xxx-wide {
-    min-width: 300px;
+    min-width: calc(var(--key-size) * 7.5);
 }
 
 .spacer {
     background-color: transparent;
     box-shadow: none;
     border: none;
-    min-width: 20px;
+    min-width: calc(var(--key-size) / 2);
 }
 
 .output {
-    margin-top: 30px;
-    padding: 20px;
+    margin-top: 20px;
+    padding: 15px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    font-size: clamp(0.9rem, 3vw, 1rem);
 }
 
 .output p {
-    font-size: 18px;
-    margin: 10px 0;
+    margin: 8px 0;
     color: #333;
 }
 
@@ -109,24 +123,156 @@ h1 {
     color: #4CAF50;
 }
 
-/* Special styling for numpad keys */
+.mobile-notice {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #666;
+    display: none;
+}
+
+/* Special key styling */
 .key[data-key^="Numpad"] {
     background-color: #f8f8f8;
 }
 
-/* Arrow keys styling */
 .key[data-key^="Arrow"] {
     background-color: #f0f8ff;
-    font-size: 16px;
 }
 
-/* Function keys styling */
 .key[data-key^="F"] {
     background-color: #fff8f8;
 }
 
-/* Modifier keys styling */
 .key[data-key$="Left"],
 .key[data-key$="Right"] {
     background-color: #f0f0f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    :root {
+        --key-size: 35px;
+        --key-font-size: 12px;
+    }
+    
+    .key {
+        padding: 3px;
+    }
+    
+    .xxx-wide {
+        min-width: calc(var(--key-size) * 6);
+    }
+}
+
+@media (max-width: 900px) {
+    :root {
+        --key-size: 30px;
+        --key-font-size: 10px;
+    }
+    
+    .key {
+        padding: 2px;
+    }
+    
+    .xxx-wide {
+        min-width: calc(var(--key-size) * 5);
+    }
+    
+    /* Hide some keys on smaller screens */
+    .key[data-key="PrintScreen"],
+    .key[data-key="ScrollLock"],
+    .key[data-key="Pause"] {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 5px;
+    }
+    
+    .keyboard {
+        padding: 5px;
+        border-radius: 8px;
+    }
+    
+    .mobile-notice {
+        display: block;
+    }
+    
+    /* Simplify the keyboard for mobile */
+    .key[data-key^="F"] {
+        display: none;
+    }
+    
+    .spacer:not(:first-child) {
+        display: none;
+    }
+    
+    .key[data-key="ContextMenu"] {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    :root {
+        --key-size: 25px;
+        --key-font-size: 8px;
+        --key-gap: 2px;
+    }
+    
+    .key {
+        min-width: calc(var(--key-size) * 0.9);
+        height: calc(var(--key-size) * 1.2);
+    }
+    
+    .wide {
+        min-width: calc(var(--key-size) * 1.5);
+    }
+    
+    .x-wide {
+        min-width: calc(var(--key-size) * 2);
+    }
+    
+    .xx-wide {
+        min-width: calc(var(--key-size) * 2.5);
+    }
+    
+    .xxx-wide {
+        min-width: calc(var(--key-size) * 4);
+    }
+    
+    /* Hide numpad on very small screens */
+    .key[data-key^="Numpad"],
+    .key[data-key="NumLock"],
+    .key[data-key="NumpadDivide"],
+    .key[data-key="NumpadMultiply"],
+    .key[data-key="NumpadSubtract"],
+    .key[data-key="NumpadAdd"],
+    .key[data-key="NumpadEnter"] {
+        display: none;
+    }
+}
+
+@media (max-width: 400px) {
+    :root {
+        --key-size: 20px;
+        --key-font-size: 7px;
+    }
+    
+    .key {
+        min-width: calc(var(--key-size) * 0.8);
+        height: calc(var(--key-size) * 1.5);
+    }
+    
+    /* Further simplify for tiny screens */
+    .key[data-key="Insert"],
+    .key[data-key="Delete"],
+    .key[data-key="Home"],
+    .key[data-key="End"],
+    .key[data-key="PageUp"],
+    .key[data-key="PageDown"] {
+        display: none;
+    }
 }
