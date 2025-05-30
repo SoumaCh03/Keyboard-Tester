@@ -5,26 +5,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const keyPressedDisplay = document.getElementById('key-pressed');
     const keySound = document.getElementById('keySound');
     
-    // Highlight key on click
+    // Touch support for mobile devices
     keys.forEach(key => {
-        key.addEventListener('mousedown', function() {
-            if (this.classList.contains('spacer')) return;
-            
-            this.classList.add('active');
-            playKeySound();
-            updateKeyDisplay(this.dataset.key, this.textContent, this.textContent);
+        // Mouse events
+        key.addEventListener('mousedown', handleKeyPress);
+        key.addEventListener('mouseup', handleKeyRelease);
+        key.addEventListener('mouseleave', handleKeyRelease);
+        
+        // Touch events
+        key.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            handleKeyPress.call(this);
         });
         
-        key.addEventListener('mouseup', function() {
-            this.classList.remove('active');
-        });
-        
-        key.addEventListener('mouseleave', function() {
-            this.classList.remove('active');
+        key.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            handleKeyRelease.call(this);
         });
     });
     
-    // Highlight key on keyboard press
+    function handleKeyPress() {
+        if (this.classList.contains('spacer')) return;
+        
+        this.classList.add('active');
+        playKeySound();
+        updateKeyDisplay(this.dataset.key, this.textContent, this.textContent);
+    }
+    
+    function handleKeyRelease() {
+        this.classList.remove('active');
+    }
+    
+    // Keyboard events
     document.addEventListener('keydown', function(e) {
         e.preventDefault();
         const keyElement = document.querySelector(`.key[data-key="${e.code}"]`);
@@ -48,14 +60,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function playKeySound() {
-        keySound.currentTime = 0;
-        keySound.play();
+        if (keySound) {
+            keySound.currentTime = 0;
+            keySound.play().catch(e => console.log("Audio play failed:", e));
+        }
     }
     
     function updateKeyDisplay(code, text, pressed) {
-        lastKeyDisplay.textContent = text;
-        keyCodeDisplay.textContent = code;
-        keyPressedDisplay.textContent = pressed === ' ' ? 'Space' : pressed;
+        if (lastKeyDisplay) lastKeyDisplay.textContent = text;
+        if (keyCodeDisplay) keyCodeDisplay.textContent = code;
+        if (keyPressedDisplay) keyPressedDisplay.textContent = pressed === ' ' ? 'Space' : pressed;
     }
     
     function getKeyDisplayText(event) {
