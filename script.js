@@ -2,14 +2,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const keys = document.querySelectorAll('.key');
     const lastKeyDisplay = document.getElementById('last-key');
     const keyCodeDisplay = document.getElementById('key-code');
+    const keyPressedDisplay = document.getElementById('key-pressed');
     const keySound = document.getElementById('keySound');
     
     // Highlight key on click
     keys.forEach(key => {
         key.addEventListener('mousedown', function() {
+            if (this.classList.contains('spacer')) return;
+            
             this.classList.add('active');
             playKeySound();
-            updateKeyDisplay(this.dataset.key, this.textContent);
+            updateKeyDisplay(this.dataset.key, this.textContent, this.textContent);
         });
         
         key.addEventListener('mouseup', function() {
@@ -29,7 +32,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (keyElement) {
             keyElement.classList.add('active');
             playKeySound();
-            updateKeyDisplay(e.code, getKeyDisplayText(e));
+            updateKeyDisplay(e.code, getKeyDisplayText(e), e.key);
+        } else {
+            // For keys not represented on the visual keyboard
+            updateKeyDisplay(e.code, e.code, e.key);
+            playKeySound();
         }
     });
     
@@ -45,16 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
         keySound.play();
     }
     
-    function updateKeyDisplay(code, text) {
+    function updateKeyDisplay(code, text, pressed) {
         lastKeyDisplay.textContent = text;
         keyCodeDisplay.textContent = code;
+        keyPressedDisplay.textContent = pressed === ' ' ? 'Space' : pressed;
     }
     
     function getKeyDisplayText(event) {
         if (event.key.length === 1) {
             return event.key;
         }
-        return event.key.replace('Arrow', '') + (event.code.includes('Left') ? ' (Left)' : 
-               event.code.includes('Right') ? ' (Right)' : '');
+        return event.key.replace('Arrow', '') + 
+               (event.code.includes('Left') ? ' (Left)' : 
+                event.code.includes('Right') ? ' (Right)' : '');
     }
 });
